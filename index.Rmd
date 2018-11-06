@@ -53,21 +53,8 @@ background-size: 350px auto
 background-position: 50% 20%
 class: center, bottom
 
-## Slides
 
-View these slides at [mikewk.com/rtweet-workshop](https://mikewk.com/rtweet-workshop)
-
-Follow along with the companion [script.R](../script.R) file on Github ([github.com/mkearney/rtweet-workshop](https://github.com/mkearney/rtweet-workshop))
-
----
-class: center, middle
-
-## rtweet
-
-### /ärtwēt/
-
-See **{rtweet}** in action, [tracking tweets about \#NICAR18](https://github.com/computer-assisted-reporting/NICAR18)
-
+View these slides at [mkearney.github.io/rtweet-workshop](https://mkearney.github.io/rtweet-workshop)
 
 ---
 class: tight
@@ -129,10 +116,12 @@ class: inverse, center, middle
 **Application Program Interfaces** (APIs) are sets of protocols that govern interactions between sites and users.
 
 APIs are similar to web browsers but with different purpose:
+
 - Web browsers **render** content
 - Web APIs manage and organize **data**
 
 For public APIs, many sites only allow **authorized** users
+
 - Twitter, Facebook, Instagram, Github, etc.
 
 ---
@@ -173,8 +162,6 @@ Get user IDs of accounts **followed by** (AKA friends) [@jack](https://twitter.c
 
 ```{r}
 fds <- get_friends("jack")
-
-## print returned object (a tibble)
 fds
 ```
 
@@ -188,8 +175,6 @@ Get friends of **multiple** users in a single call.
 fds <- get_friends(
   c("hadleywickham", "NateSilver538", "Nate_Cohn")
 )
-
-## print returned object (a tibble)
 fds
 ```
 
@@ -201,8 +186,6 @@ Get user IDs of accounts **following** (AKA followers) [@mizzou](https://twitter
 
 ```{r}
 mu <- get_followers("mizzou")
-
-## print returned object (a tibble)
 mu
 ```
 
@@ -245,7 +228,8 @@ class: inverse, center, middle
 Search for one or more keyword(s) (note: implicit `AND` between words)
 
 ```{r}
-rt <- search_tweets(q = "rstats data science")
+rds <- search_tweets(q = "rstats data science")
+rds
 ```
 
 ---
@@ -255,7 +239,8 @@ rt <- search_tweets(q = "rstats data science")
 Search for exact phrase
 
 ```{r}
-rt <- search_tweets(q = '"data science"')
+ds <- search_tweets('"data science"')
+ds
 ```
 
 ---
@@ -265,53 +250,100 @@ rt <- search_tweets(q = '"data science"')
 Search for keyword(s) and phrase
 
 ```{r}
-rt <- search_tweets(q = "rstats python \"data science\"")
+rpds <- search_tweets("rstats python \"data science\"")
+rpds
 ```
 
 ---
 
 ## `search_tweets()`
 
-```{r}
-## By default, `search_tweets()` returns **100** tweets. To return more
-## (rate limit is 18,000 per 15 minutes), set `n` to a higher number.
-rt <- search_tweets(q = "rstats", n = 10000)
-#ts_plot(rt, "hours")
+By default, `search_tweets()` returns up to 100 of the most recent matching 
+tweets. To return more, set `n` to a higher number (for normal tokens, the rate
+limit is 18,000 every fifteen minutes).
 
-## `search_tweets()`
-## Use ` OR ` between search terms to find **any match**.
-rt <- search_tweets("filter:verified OR -filter:verified", n = 500,
-  token = bearer_token())
+```{r}
+rstats <- search_tweets(q = "rstats", n = 10000)
+rstats
 ```
 
 ---
 
 ## `search_tweets()`
 
+**PRO TIP #1**: Use `bearer_token()` to increase rate limit to 45,000 per
+fifteen minutes.
+
 ```{r}
-## Specify a **language** of the tweets and **exclude retweets**.
-## search for tweets in english that are not retweets
+mosen <- search_tweets(
+  "mccaskill OR hawley", 
+  n = 45000, 
+  token = bearer_token()
+)
+```
+
+---
+
+## `search_tweets()`
+
+**PRO TIP #2**: Get the firehose for free by searching for tweets posted by
+verified or non-verified tweets.
+
+```{r}
+fff <- search_tweets(
+  "filter:verified OR -filter:verified", 
+  n = 45000,
+  token = bearer_token()
+)
+ts_plot(fff, "secs")
+```
+
+
+---
+
+<p style="text-align:center"> <img src="img/fff.png" /> </p>
+
+---
+
+## `search_tweets()`
+
+**PRO TIP #3**: Use search operators provided by Twitter, e.g.,
+
+filter by language and exclude retweets
+
+```{r}
 rt <- search_tweets("rstats", lang = "en", include_rts = FALSE)
-#unique(stopwordslangs$lang)
-
-## Search by **geo-location**.
-## search for tweets in english that are not retweets
-## ### NEED GOOGLE API KEY
-rt <- search_tweets("lang:en", geocode = lookup_coords("Chicago, IL"))
 ```
 
 ---
 
 ## `search_tweets()`
 
-```{r}
-## Search by **source** of a tweet (e.g., only tweets sent using `ifttt`
-rt <- search_tweets('lang:en source:"Twitter for iPhone"', n = 300)
+search geolocation (ex: tweets within 25 miles of Columbia, MO)
 
-## all tweets
-v <- search_tweets('filter:verified', n = 300)
-nv <- search_tweets('-filter:verified', n = 300)
-v <- dplyr::bind_rows(v, nv)
+```{r}
+como <- search_tweets(geocode = "38.9517,-92.3341,25mi", n = 1000)
+como <- lat_lng(como)
+par(mar = c(0, 0, 0, 0))
+maps::map("state", fill = TRUE, col = "#ffffff", 
+  lwd = .25, mar = c(0, 0, 0, 0), 
+  xlim = c(-96, -89), y = c(35, 41))
+with(como, points(lng, lat, pch = 20, col = "red"))
+```
+
+---
+
+<p style="text-align:center"> <img src="img/como.png" /> </p>
+
+---
+
+## `search_tweets()`
+
+Filter by the type of device that posted the tweet.
+
+```{r}
+rt <- search_tweets("lang:en", n = 300,
+  source = '"Twitter for iPhone"')
 ```
 
 ---
@@ -321,7 +353,7 @@ class: inverse, center, middle
 
 ---
 
-## `get_timelines()`
+## `get_timeline()`
 
 Get the most recent tweets posted by a user.
 
@@ -464,6 +496,17 @@ library(gbm)
 table(tweet_source_data$source)
 
 tf$y <- tweet_source_data$source == "Twitter for iPhone"
+```
+
+---
+
+## Machine learning data
+
+```{r}
+## all tweets
+v <- search_tweets('filter:verified', n = 300)
+nv <- search_tweets('-filter:verified', n = 300)
+v <- dplyr::bind_rows(v, nv)
 ```
 
 ---
