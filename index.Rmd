@@ -39,14 +39,6 @@ print <- function(x, n = NULL, align = "c", digits = 3) {
 }
 ```
 
-Build these slides on your computer:
-
-``` r
-source(
-  "https://raw.githubusercontent.com/mkearney/rtweet-workshop/master/R/build-slides.R"
-)
-```
-
 ---
 background-image: url(img/logo.png)
 background-size: 350px auto
