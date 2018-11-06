@@ -5,6 +5,30 @@ body {
 .title-slide h3, .remark-slide .title-slide h3, h1, h2, h3 {
   font-family: 'Helvetica Neue', Helvetica, sans-serif;
 }
+.title-slide {
+  background-image: url("/Users/kearneymw/Dropbox/Mizzou-identity/mu_jschool.png"),
+                    url("/Users/kearneymw/Dropbox/Mizzou-identity/mu_dsa_rev.png");
+  background-size: 300px auto, 300px auto;
+  background-position: 0% 100%, 100% 100%;
+}
+
+.remark-slide-content {
+  background-image: url("/Users/kearneymw/Dropbox/Mizzou-identity/mu_jschool.png"),
+                    url("/Users/kearneymw/Dropbox/Mizzou-identity/mu_dsa_rev.png");
+  background-size: 250px auto, 250px auto;
+  background-position: 0% 100%, 100% 100%;
+}
+.inverse {
+  background-image: none !important;
+}
+
+.remark-slide-number {
+  top: 12px;
+  bottom: unset;
+}
+.title-slide .remark-slide-number {
+  display: none;
+}
 ul li, ol li {
   margin-top: .6em;
   margin-bottom: .6em;

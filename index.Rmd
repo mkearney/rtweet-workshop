@@ -74,7 +74,7 @@ class: tight
 
 ## About {rtweet}
 
-- On the Comprehensive R Archive Network
+- On Comprehensive R Archive Network (CRAN)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)[![CRAN status](https://www.r-pkg.org/badges/version/rtweet)](https://cran.r-project.org/package=rtweet)
 
@@ -216,6 +216,8 @@ To get user IDs of all 48.8 million followers of @realDonaldTrump, you only need
 
 ## `get_followers()`
 
+Get all of Donald Trump's followers.
+
 ```{r}
 ## get all of trump's followers
 rdt <- get_followers(
@@ -235,21 +237,22 @@ class: inverse, center, middle
 
 ## Search pt. 1
 
+Search for one or more keyword(s) (note: implicit `AND` between words)
+
 ```{r}
-## `search_tweets()`
-##   - Search for Twitter statuses containing a **keyword**, **phrase**,
-##   or **multiple keywords**.
+rt <- search_tweets(q = "rstats data science")
+```
 
-## + search for a keyword
-rt <- search_tweets(q = "rstats")
-rt
+Search for exact phrase
 
-## + search for a phrase
+```{r}
 rt <- search_tweets(q = '"data science"')
+```
 
-## +search for multiple keywords
-rt <- search_tweets(q = "rstats AND python")
-rt
+Search for keyword(s) and phrase
+
+```{r}
+rt <- search_tweets(q = "rstats python \"data science\"")
 ```
 
 ---
