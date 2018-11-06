@@ -6,15 +6,15 @@ body {
   font-family: 'Helvetica Neue', Helvetica, sans-serif;
 }
 .title-slide {
-  background-image: url("img/mu_jschool.png"),
-                    url("img/mu_dsa_rev.png");
+  background-image: url("../img/mu_jschool.png"),
+                    url("../img/mu_dsa_rev.png");
   background-size: 300px auto, 300px auto;
   background-position: 0% 100%, 100% 100%;
 }
 
 .remark-slide-content {
-  background-image: url("img/mu_jschool.png"),
-                    url("img/mu_dsa_rev.png");
+  background-image: url("../img/mu_jschool.png"),
+                    url("../img/mu_dsa_rev.png");
   background-size: 250px auto, 250px auto;
   background-position: 0% 100%, 100% 100%;
 }
