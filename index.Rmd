@@ -169,11 +169,13 @@ Twitter's API documentation distinguishes between **friends** and **followers**.
 
 ## `get_friends()`
 
-Get the list of accounts **followed by** @jack (co-founder and CEO of Twitter).
+Get user IDs of accounts **followed by** (AKA friends) [@jack](https://twitter.com/jack), the co-founder and CEO of Twitter.
 
 ```{r}
-## get user IDs of jack's friend's
 fds <- get_friends("jack")
+
+## print returned object (a tibble)
+fds
 ```
 
 ---
@@ -183,10 +185,11 @@ fds <- get_friends("jack")
 Get friends of **multiple** users in a single call.
 
 ```{r}
-## get friends of multiple accounts
 fds <- get_friends(
   c("hadleywickham", "NateSilver538", "Nate_Cohn")
 )
+
+## print returned object (a tibble)
 fds
 ```
 
@@ -194,11 +197,13 @@ fds
 
 ## `get_followers()`
 
-Get the user IDs of accounts **following** a user with `get_followers()`.
+Get user IDs of accounts **following** (AKA followers) [@mizzou](https://twitter.com/mizzou).
 
 ```{r}
-kmw <- get_followers("kearneymw")
-kmw
+mu <- get_followers("mizzou")
+
+## print returned object (a tibble)
+mu
 ```
 
 ---
@@ -207,10 +212,10 @@ kmw
 
 Unlike friends (limited by Twitter to 5,000), there is **no limit** on the number of followers. 
 
-To get user IDs of all 48.8 million followers of @realDonaldTrump, you only need two things:
+To get user IDs of all 55(ish) million followers of @realDonaldTrump, you need two things:
 
 1. A stable **internet** connection 
-2. **Time** – approximately five and a half days
+1. **Time** – approximately five and a half days
 
 ---
 
@@ -222,7 +227,7 @@ Get all of Donald Trump's followers.
 ## get all of trump's followers
 rdt <- get_followers(
   "realdonaldtrump", 
-  n = 55000000, 
+  n = 56000000, 
   retryonratelimit = TRUE
 )
 ```
@@ -235,7 +240,7 @@ class: inverse, center, middle
 
 ---
 
-## Search pt. 1
+## `search_tweets()` pt. 1
 
 Search for one or more keyword(s) (note: implicit `AND` between words)
 
@@ -257,7 +262,7 @@ rt <- search_tweets(q = "rstats python \"data science\"")
 
 ---
 
-## Search pt. 2
+## `search_tweets()` pt. 2
 
 ```{r}
 ## By default, `search_tweets()` returns **100** tweets. To return more
@@ -273,7 +278,7 @@ rt <- search_tweets("filter:verified OR -filter:verified", n = 500,
 
 ---
 
-## Search pt. 3
+## `search_tweets()` pt. 3
 
 ```{r}
 ## Specify a **language** of the tweets and **exclude retweets**.
@@ -289,7 +294,7 @@ rt <- search_tweets("lang:en", geocode = lookup_coords("Chicago, IL"))
 
 ---
 
-## Search pt. 4
+## `search_tweets()` pt. 4
 
 ```{r}
 ## Search by **source** of a tweet (e.g., only tweets sent using `ifttt`
@@ -302,34 +307,63 @@ v <- dplyr::bind_rows(v, nv)
 ```
 
 ---
+class: inverse, center, middle
 
-## Timelines
+# 3. <br /> User timelines
+
+---
+
+## `get_timelines()`
+
+Get the most recent tweets posted by a user.
 
 ```{r}
+cnn <- get_timeline("cnn")
+```
+
+---
+
 ## `get_timeline()`
 
-## Provide a **user ID** or **screen name** and specify the **number** of
-## tweets (max of 3,200).
-cnn <- get_timeline(c("cnn", "foxnews"), n = 3200)
+Get up to the most recent 3,200 tweets (endpoint max) posted by multiple users.
 
-dplyr::group_by(cnn, screen_name) %>%
-  ts_plot("days")
+```{r}
+nws <- get_timeline(c("cnn", "foxnews", "msnbc"), n = 3200)
+```
 
-kmw <- get_timeline("kearneymw", n = 3200)
-ts_plot(kmw, "weeks")
+---
+
+## `ts_plot()`
+
+Group by `screen_name` and plot hourly frequencies of tweets.
+
+```{r}
+nws %>%
+  dplyr::group_by(screen_name) %>%
+  ts_plot("hours")
 ```
 
 
 ---
+class: inverse, center, middle
 
-## Favorites
+# 4. <br /> User favorites
+
+---
+
+## `get_favorites()`
+
+Get up to the most recent 3,000 tweets favorited by a user.
 
 ```{r}
-## `get_favorites()`
-## Provide a **user ID** or **screen name** and specify the **number** of
-## tweets (max of **3,000**).
 kmw_favs <- get_favorites("kearneymw", n = 3000)
+```
 
+---
+
+## `lookup_tweets()`
+
+```{r}
 ## `lookup_tweets()`
 status_ids <- c("947235015343202304", "947592785519173637",
   "948359545767841792", "832945737625387008")
