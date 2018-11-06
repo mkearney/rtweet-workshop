@@ -240,7 +240,7 @@ class: inverse, center, middle
 
 ---
 
-## `search_tweets()` pt. 1
+## `search_tweets()`
 
 Search for one or more keyword(s) (note: implicit `AND` between words)
 
@@ -248,11 +248,19 @@ Search for one or more keyword(s) (note: implicit `AND` between words)
 rt <- search_tweets(q = "rstats data science")
 ```
 
+---
+
+## `search_tweets()`
+
 Search for exact phrase
 
 ```{r}
 rt <- search_tweets(q = '"data science"')
 ```
+
+---
+
+## `search_tweets()`
 
 Search for keyword(s) and phrase
 
@@ -262,7 +270,7 @@ rt <- search_tweets(q = "rstats python \"data science\"")
 
 ---
 
-## `search_tweets()` pt. 2
+## `search_tweets()`
 
 ```{r}
 ## By default, `search_tweets()` returns **100** tweets. To return more
@@ -278,7 +286,7 @@ rt <- search_tweets("filter:verified OR -filter:verified", n = 500,
 
 ---
 
-## `search_tweets()` pt. 3
+## `search_tweets()`
 
 ```{r}
 ## Specify a **language** of the tweets and **exclude retweets**.
@@ -294,7 +302,7 @@ rt <- search_tweets("lang:en", geocode = lookup_coords("Chicago, IL"))
 
 ---
 
-## `search_tweets()` pt. 4
+## `search_tweets()`
 
 ```{r}
 ## Search by **source** of a tweet (e.g., only tweets sent using `ifttt`
@@ -383,7 +391,7 @@ usr <- lookup_users(users)
 
 ---
 
-## Stream pt 1
+## `stream_tweets()`
 
 ```{r}
 ## `stream_tweets()`
@@ -399,7 +407,7 @@ ts_plot(st, "secs")
 
 ---
 
-## Stream pt. 2
+## `stream_tweets()`
 
 ```{r}
 ## - **Locate** by bounding box
@@ -414,7 +422,7 @@ table(stl$country)
 
 ---
 
-## Stream pt. 3
+## `stream_tweets()`
 
 ```{r}
 tweet_source_data <- search_tweets(
