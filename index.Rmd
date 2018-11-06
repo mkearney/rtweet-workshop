@@ -1,0 +1,482 @@
+---
+title: "rtweet-workshop"
+subtitle: "Collecting and analyzing Twitter data"
+author: '`r rmdees::title_author()`'
+date: '`r rmdees::title_icons_fa5()`'
+output:
+  xaringan::moon_reader:
+    lib_dir: lib
+    css: ["robot", "robot-fonts", "css/slides.css"]
+    self_contained: true
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+---
+
+## Slides
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = FALSE,
+  collapse = TRUE,
+  comment = "#>"
+)
+options(htmltools.dir.version = FALSE)
+htmltools::tagList(rmarkdown::html_dependency_font_awesome())
+
+## load libraries, set ggplot2 theme, and create datatable function
+library(mwk)
+theme_set(tfse::theme_mwk(base_size = 14))
+set.seed(20180911)
+print <- function(x, n = NULL, align = "c", digits = 3) {
+  if (is.null(n)) n <- nrow(x)
+  if (nrow(x) < n) n <- nrow(x)
+  cat(paste(knitr::kable(x[seq_len(n), ], format = "markdown", 
+    align = align, digits = digits), collapse = "\n"))
+}
+```
+
+Build these slides on your computer:
+
+``` r
+source(
+  "https://raw.githubusercontent.com/mkearney/rtweet-workshop/master/R/build-slides.R"
+)
+```
+
+---
+background-image: url(img/logo.png)
+background-size: 350px auto
+background-position: 50% 20%
+class: center, bottom
+
+## Slides
+
+View these slides at [mikewk.com/rtweet-workshop](https://mikewk.com/rtweet-workshop)
+
+Follow along with the companion [script.R](../script.R) file on Github ([github.com/mkearney/rtweet-workshop](https://github.com/mkearney/rtweet-workshop))
+
+---
+class: center, middle
+
+## rtweet
+
+### /ärtwēt/
+
+See **{rtweet}** in action, [tracking tweets about \#NICAR18](https://github.com/computer-assisted-reporting/NICAR18)
+
+
+---
+class: tight
+
+## About {rtweet}
+
+- On the Comprehensive R Archive Network
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)[![CRAN status](https://www.r-pkg.org/badges/version/rtweet)](https://cran.r-project.org/package=rtweet)
+
+- Growing base of users
+
+![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rtweet)[![Depsy](http://depsy.org/api/package/cran/rtweet/badge.svg)](http://depsy.org/package/r/rtweet)
+
+- Fairly stable
+
+[![Build Status](https://travis-ci.org/mkearney/rtweet.svg?branch=master)](https://travis-ci.org/mkearney/rtweet)[![Coverage Status](https://codecov.io/gh/mkearney/rtweet/branch/master/graph/badge.svg)](https://codecov.io/gh/mkearney/rtweet?branch=master)[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
+
+- Package website: [rtweet.info](http://rtweet.info)
+
+[![Generic badge](https://img.shields.io/badge/website-up-green.svg)](http://rtweet.info/)
+
+- Github repo: [mkearney/rtweet](https://github.com/mkearney/rtweet)
+
+[![Generic badge](https://img.shields.io/badge/stars-209-blue.svg)](https://github.com/mkearney/rtweet/)[![Generic badge](https://img.shields.io/badge/forks-47-blue.svg)](https://github.com/mkearney/rtweet/)
+
+---
+
+## Install
+
+- Install **{rtweet}** from [CRAN](https://cran.r-project/package=rtweet).
+
+```{r}
+install.packages("rtweet")
+```
+
+- Or install the **development version** from [Github](https://github.com/mkearney/rtweet).
+
+```{r}
+devtools::install_github("mkearney/rtweet")
+```
+
+- Load **{rtweet}**
+
+```{r tidy=FALSE}
+library(rtweet)
+```
+
+
+---
+class: inverse, center, middle
+
+# Accessing web APIs
+
+---
+
+## Some background
+
+**Application Program Interfaces** (APIs) are sets of protocols that govern interactions between sites and users.
+
+APIs are similar to web browsers but with different purpose:
+- Web browsers **render** content
+- Web APIs manage and organize **data**
+
+For public APIs, many sites only allow **authorized** users
+- Twitter, Facebook, Instagram, Github, etc.
+
+---
+
+## developer.twitter.com
+
+To create a token with write and DM-read access, users must...
+
+1. Apply and get approved for a developer account with Twitter 
+1. Create a Twitter app (fill out a form)
+
+For step-by-step instructions on how to create a Twitter app and corresponding token, see **[rtweet.info/articles/auth.html](https://rtweet.info/articles/auth.html)
+
+---
+class: inverse, center, middle
+
+# Twitter Data!
+
+---
+class: inverse, center, middle
+
+# 1. <br /> Getting friends/followers
+
+---
+
+## Friends/followers
+
+Twitter's API documentation distinguishes between **friends** and **followers**.
+
++ **Friend** refers to an account a given user follows
++ **Follower** refers to an account following a given user
+
+---
+
+## `get_friends()`
+
+Get the list of accounts **followed by** @jack (co-founder and CEO of Twitter).
+
+```{r}
+## get user IDs of jack's friend's
+fds <- get_friends("jack")
+```
+
+---
+
+## `get_friends()`
+
+Get friends of **multiple** users in a single call.
+
+```{r}
+## get friends of multiple accounts
+fds <- get_friends(
+  c("hadleywickham", "NateSilver538", "Nate_Cohn")
+)
+fds
+```
+
+---
+
+## `get_followers()`
+
+Get the user IDs of accounts **following** a user with `get_followers()`.
+
+```{r}
+kmw <- get_followers("kearneymw")
+kmw
+```
+
+---
+
+## `get_followers()`
+
+Unlike friends (limited by Twitter to 5,000), there is **no limit** on the number of followers. 
+
+To get user IDs of all 48.8 million followers of @realDonaldTrump, you only need two things:
+
+1. A stable **internet** connection 
+2. **Time** – approximately five and a half days
+
+---
+
+## `get_followers()`
+
+```{r}
+## get all of trump's followers
+rdt <- get_followers(
+  "realdonaldtrump", 
+  n = 55000000, 
+  retryonratelimit = TRUE
+)
+```
+
+
+---
+class: inverse, center, middle
+
+# 2. <br /> Searching for tweets
+
+---
+
+## Search pt. 1
+
+```{r}
+## `search_tweets()`
+##   - Search for Twitter statuses containing a **keyword**, **phrase**,
+##   or **multiple keywords**.
+
+## + search for a keyword
+rt <- search_tweets(q = "rstats")
+rt
+
+## + search for a phrase
+rt <- search_tweets(q = '"data science"')
+
+## +search for multiple keywords
+rt <- search_tweets(q = "rstats AND python")
+rt
+```
+
+---
+
+## Search pt. 2
+
+```{r}
+## By default, `search_tweets()` returns **100** tweets. To return more
+## (rate limit is 18,000 per 15 minutes), set `n` to a higher number.
+rt <- search_tweets(q = "rstats", n = 10000)
+#ts_plot(rt, "hours")
+
+## `search_tweets()`
+## Use ` OR ` between search terms to find **any match**.
+rt <- search_tweets("filter:verified OR -filter:verified", n = 500,
+  token = bearer_token())
+```
+
+---
+
+## Search pt. 3
+
+```{r}
+## Specify a **language** of the tweets and **exclude retweets**.
+## search for tweets in english that are not retweets
+rt <- search_tweets("rstats", lang = "en", include_rts = FALSE)
+#unique(stopwordslangs$lang)
+
+## Search by **geo-location**.
+## search for tweets in english that are not retweets
+## ### NEED GOOGLE API KEY
+rt <- search_tweets("lang:en", geocode = lookup_coords("Chicago, IL"))
+```
+
+---
+
+## Search pt. 4
+
+```{r}
+## Search by **source** of a tweet (e.g., only tweets sent using `ifttt`
+rt <- search_tweets('lang:en source:"Twitter for iPhone"', n = 300)
+
+## all tweets
+v <- search_tweets('filter:verified', n = 300)
+nv <- search_tweets('-filter:verified', n = 300)
+v <- dplyr::bind_rows(v, nv)
+```
+
+---
+
+## Timelines
+
+```{r}
+## `get_timeline()`
+
+## Provide a **user ID** or **screen name** and specify the **number** of
+## tweets (max of 3,200).
+cnn <- get_timeline(c("cnn", "foxnews"), n = 3200)
+
+dplyr::group_by(cnn, screen_name) %>%
+  ts_plot("days")
+
+kmw <- get_timeline("kearneymw", n = 3200)
+ts_plot(kmw, "weeks")
+```
+
+
+---
+
+## Favorites
+
+```{r}
+## `get_favorites()`
+## Provide a **user ID** or **screen name** and specify the **number** of
+## tweets (max of **3,000**).
+kmw_favs <- get_favorites("kearneymw", n = 3000)
+
+## `lookup_tweets()`
+status_ids <- c("947235015343202304", "947592785519173637",
+  "948359545767841792", "832945737625387008")
+twt <- lookup_tweets(status_ids)
+```
+
+---
+
+## Users
+
+```{r}
+## `lookup_users()`
+## screen names
+users <- c("hadleywickham", "NateSilver538", "Nate_Cohn")
+usr <- lookup_users(users)
+```
+
+---
+
+## Stream pt 1
+
+```{r}
+## `stream_tweets()`
+## - "Random" **sample**
+st <- stream_tweets(q = "", timeout = 30)
+
+## - **Filter** by keyword
+st <- stream_tweets(q = "realDonaldTrump,Mueller", timeout = 30)
+st
+
+ts_plot(st, "secs")
+```
+
+---
+
+## Stream pt. 2
+
+```{r}
+## - **Locate** by bounding box
+st <- stream_tweets(q = lookup_coords("world"), timeout = 30)
+
+stl <- lat_lng(st)
+
+maps::map("world")
+points(stl$lng, stl$lat, cex = 1, pch = 21, col = "#550000cc", bg = "#dd3333cc")
+table(stl$country)
+```
+
+---
+
+## Stream pt. 3
+
+```{r}
+tweet_source_data <- search_tweets(
+  '(filter:verified OR -filter:verified) AND (source:"Twitter for iPhone" OR source:"Twitter for Android")',
+  include_rts = FALSE,
+  token = bearer_token(),
+  n = 40000)
+
+table(tweet_source_data$source)
+```
+
+---
+
+## Sentiment
+
+```{r}
+sent <- syuzhet::get_sentiment(tweet_source_data$text)
+
+tweet_source_data$sent <- sent
+
+dplyr::mutate(tweet_source_data, sent = sent)
+
+syuzhet::get_nrc_sentiment(tweet_source_data$text[1:50])
+
+tweet_source_data <- tweet_source_data %>%
+  dplyr::mutate(
+    sent = syuzhet::get_sentiment(text)
+  )
+```
+
+---
+
+## Features
+
+```{r}
+tf <- textfeatures::textfeatures(tweet_source_data)
+library(tidyverse)
+library(gbm)
+table(tweet_source_data$source)
+
+tf$y <- tweet_source_data$source == "Twitter for iPhone"
+```
+
+---
+
+## Machine learning
+
+```{r}
+m1 <- gbm(y ~ ., data = tf[1:15000, -1], n.trees = 200)
+p <- predict(m1, newdata = tf[15001:nrow(tf), -1],
+  type = "response", n.trees = 200)
+
+table(p > .50, tf$y[15001:nrow(tf)])
+(2769 + 1245) / (756 + 1530 + 2769 + 1245)
+
+summary(m1)
+```
+
+---
+
+## Group/summarise
+
+```{r}
+tweet_source_data %>%
+  group_by(source) %>%
+  summarise(
+    n = n(),
+    users = n_distinct(user_id),
+    chars = mean(nchar(text)),
+    sent = mean(sent, na.rm = TRUE)
+  )
+```
+
+
+---
+
+## List members
+
+```{r}
+lists_members()
+
+bp <- tweetbotornot::tweetbotornot(c(
+  "kearneymw", "realdonaldtrump",
+  "netflix_bot", "tidyversetweets",
+  "thebotlebowski", "rodhart99"))
+bp
+```
+
+---
+
+## Tweetbotornot
+
+```{r}
+remotes::install_github("mkearney/tweetbotornot")
+remotes::install_github("mkearney/textfeatures")
+
+##
+install.package("quanteda")
+```
+
+
+  
