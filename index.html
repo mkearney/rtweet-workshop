@@ -49,6 +49,10 @@ class: center, bottom
 
 View these slides at [rtweet-workshop.mikewk.com](https://rtweet-workshop.mikewk.com)
 
+View companion script at [rtweet-workshop.mikewk.com/script.Rmd](https://rtweet-workshop.mikewk.com/script.Rmd)
+
+View the Github repo at [github.com/mkearney/rtweet-workshop](https://github.com/mkearney/rtweet-workshop)
+
 ---
 class: tight
 
@@ -72,12 +76,12 @@ class: tight
 
 - Github repo: [mkearney/rtweet](https://github.com/mkearney/rtweet)
 
-[![Generic badge](https://img.shields.io/badge/stars-209-blue.svg)](https://github.com/mkearney/rtweet/)[![Generic badge](https://img.shields.io/badge/forks-47-blue.svg)](https://github.com/mkearney/rtweet/)
+[![Generic badge](https://img.shields.io/badge/stars-313-blue.svg)](https://github.com/mkearney/rtweet/)[![Generic badge](https://img.shields.io/badge/forks-74-blue.svg)](https://github.com/mkearney/rtweet/)
 
 ---
 
 ## Roadmap
-1. Search
+1. Search tweets
 1. Timelines
 1. Favorites
 1. Lookup tweets
@@ -150,7 +154,8 @@ To create your own token (with write and DM-read access), users must...
 
 1. Apply and get approved for a developer account with Twitter
 1. Create a Twitter app (fill out a form)
-   - For step-by-step instructions on how to create a Twitter app and corresponding token, see **[rtweet.info/articles/auth.html](https://rtweet.info/articles/auth.html)
+   - For step-by-step instructions on how to create a Twitter app and corresponding token, see 
+   [rtweet.info/articles/auth.html](https://rtweet.info/articles/auth.html)
 
 ---
 class: inverse, center, middle
@@ -174,7 +179,9 @@ rds &lt;- search_tweets("rstats data science")
 rds
 ```
 
-&gt; note: implicit `AND` between words
+&lt;br&gt;
+
+&gt; *Note*: implicit `AND` between words
 
 ---
 
@@ -184,7 +191,11 @@ Search for exact phrase
 
 
 ```r
+## single quotes around doubles
 ds &lt;- search_tweets('"data science"')
+
+## or escape the quotes
+ds &lt;- search_tweets("\"data science\"")
 ds
 ```
 
@@ -214,17 +225,28 @@ rstats &lt;- search_tweets("rstats", n = 10000)
 rstats
 ```
 
+&lt;br&gt;
+
+&gt; Rate limit of 18,000 per fifteen minutes
+
 ---
 
 ## `search_tweets()`
 
-**PRO TIP #1**: Get the firehose for free by searching for tweets posted by
-verified or non-verified tweets.
+**PRO TIP #1**: Get the firehose for free by searching for tweets by
+verified **or** non-verified tweets
 
 
 ```r
-fff &lt;- search_tweets("filter:verified OR -filter:verified", n = 18000)
+fff &lt;- search_tweets(
+  "filter:verified OR -filter:verified", n = 18000)
 fff
+```
+
+Visualize second-by-second frequency
+
+
+```r
 ts_plot(fff, "secs")
 ```
 
@@ -243,7 +265,8 @@ ts_plot(fff, "secs")
 
 
 ```r
-rt &lt;- search_tweets("rstats", lang = "en", include_rts = FALSE, `-filter` = "replies")
+rt &lt;- search_tweets("rstats", lang = "en", 
+  include_rts = FALSE, `-filter` = "replies")
 ```
 
 + filter only tweets linking to news articles
@@ -254,6 +277,49 @@ nws &lt;- search_tweets("filter:news")
 ```
 
 ---
+
+## `search_tweets()`
+
++ filter only tweets that contain links
+
+
+```r
+links &lt;- search_tweets("filter:links")
+links
+```
+
+
++ filter only tweets that contain video
+
+
+```r
+vids &lt;- search_tweets("filter:video")
+vids
+```
+
+---
+
+## `search_tweets()`
+
++ filter only tweets sent `from:{screen_name}` or `to:{screen_name}` certain users
+
+
+```r
+## vector of screen names
+users &lt;- c("cnnbrk", "AP", "nytimes", 
+  "foxnews", "msnbc", "seanhannity", "maddow")
+paste0("from:", users, collapse = " OR ")
+#&gt; "from:cnnbrk OR from:AP OR from:nytimes OR from:foxnews OR 
+#&gt; from:msnbc OR from:seanhannity OR from:maddow"
+
+tousers &lt;- search_tweets(paste0("from:", users, collapse = " OR "))
+tousers
+```
+
+
+---
+
+## `search_tweets()`
 
 + filter only tweets with at least 100 favorites or 100 retweets
 
@@ -274,11 +340,25 @@ rt &lt;- search_tweets("lang:en", source = '"Twitter for iPhone"')
 
 ## `search_tweets()`
 
-**PRO TIP #3**: Search geolocation (ex: tweets within 25 miles of Columbia, MO)
+**PRO TIP #3**: Search by geolocation (ex: tweets within 25 miles of Columbia, MO)
 
 
 ```r
-como &lt;- search_tweets(geocode = "38.9517,-92.3341,25mi", n = 1000)
+como &lt;- search_tweets(
+  geocode = "38.9517,-92.3341,25mi", n = 10000
+)
+como
+```
+
+
+---
+
+## `search_tweets()`
+
+Use `lat_lng()` to convert geographical data into `lat` and `lng` variables.
+
+
+```r
 como &lt;- lat_lng(como)
 par(mar = c(0, 0, 0, 0))
 maps::map("state", fill = TRUE, col = "#ffffff", 
@@ -286,6 +366,10 @@ maps::map("state", fill = TRUE, col = "#ffffff",
   xlim = c(-96, -89), y = c(35, 41))
 with(como, points(lng, lat, pch = 20, col = "red"))
 ```
+
+&lt;br&gt;
+
+&gt; This code plots geotagged tweets on a map of Missouri
 
 ---
 
@@ -368,7 +452,7 @@ kmw_favs &lt;- get_favorites("kearneymw", n = 3000)
 ---
 class: inverse, center, middle
 
-# 5. &lt;br /&gt; Lookup statuses
+# 4. &lt;br /&gt; Lookup statuses
 
 ---
 
@@ -470,14 +554,32 @@ class: inverse, center, middle
 
 ---
 
-## Users
+## `lookup_users()`
+
+Lookup users-level (and most recent tweet) associated with vector of `user_id` or `screen_name`.
 
 
 ```r
-## `lookup_users()`
-## screen names
+## vector of users
 users &lt;- c("hadleywickham", "NateSilver538", "Nate_Cohn")
+
+## lookup users twitter data
 usr &lt;- lookup_users(users)
+usr
+```
+
+
+---
+
+## `search_users()`
+
+It's also possible to search for users. Twitter will look for matches in user names, screen names, and profile bios.
+
+
+```r
+## search for breaking news accounts
+bkn &lt;- search_users("breaking news")
+bkn
 ```
 
 ---
@@ -487,17 +589,28 @@ class: inverse, center, middle
 
 ---
 
-## List members
+## `lists_memberships()`
+
++ Get an account's list memberships (lists that include an account)
 
 
 ```r
-lists_members()
+## lists that include Nate Silver
+nsl &lt;- lists_memberships("NateSilver538")
+nsl
+```
 
-bp &lt;- tweetbotornot::tweetbotornot(c(
-  "kearneymw", "realdonaldtrump",
-  "netflix_bot", "tidyversetweets",
-  "thebotlebowski", "rodhart99"))
-bp
+---
+
+## `lists_members()`
+
++ Get all list members (accounts on a list)
+
+
+```r
+## all members of congress
+cng &lt;- lists_members(owner_user = "cspan", slug = "members-of-congress")
+cng
 ```
 
 ---
@@ -509,150 +622,227 @@ class: inverse, center, middle
 
 ## `stream_tweets()`
 
+**Sampling**: small random sample (`~ 1%`) of all publicly available tweets
+
 
 ```r
-## `stream_tweets()`
-## - "Random" **sample**
-st &lt;- stream_tweets(q = "", timeout = 30)
+ss &lt;- stream_tweets("")
+```
 
-## - **Filter** by keyword
-st &lt;- stream_tweets(q = "realDonaldTrump,Mueller", timeout = 30)
-st
+**Filtering**: search-like query (up to 400 keywords)
 
-ts_plot(st, "secs")
+
+```r
+sf &lt;- stream_tweets("mueller,fbi,investigation,trump,realdonaldtrump")
 ```
 
 ---
 
 ## `stream_tweets()`
 
+**Tracking**: vector of user ids (up to 5000 user_ids)
+
 
 ```r
-## - **Locate** by bounding box
-st &lt;- stream_tweets(q = lookup_coords("world"), timeout = 30)
+## user IDs from congress members (lists_members ex output)
+st &lt;- stream_tweets(cng$user_id)
+```
 
-stl &lt;- lat_lng(st)
+**Location**: geographical coordinates (1-360 degree location boxes)
 
-maps::map("world")
-points(stl$lng, stl$lat, cex = 1, pch = 21, col = "#550000cc", bg = "#dd3333cc")
-table(stl$country)
+
+```r
+## world-wide bounding box
+sl &lt;- stream_tweets(c(-180, -90, 180, 90))
 ```
 
 ---
 
 ## `stream_tweets()`
 
+The default duration for streams is thirty seconds `timeout = 30`
+
++ Specify specific stream duration in seconds
+
 
 ```r
-tweet_source_data &lt;- search_tweets(
-  '(filter:verified OR -filter:verified) AND (source:"Twitter for iPhone" OR source:"Twitter for Android")',
-  include_rts = FALSE,
-  token = bearer_token(),
-  n = 40000)
-
-table(tweet_source_data$source)
+## stream for 10 minutes
+stm &lt;- stream_tweets(timeout = 60 * 10)
 ```
+
+---
+
+## `stream_tweets()`
+
+Stream JSON data directly to a text file
+
+
+```r
+stream_tweets(timeout = 60 * 10, 
+  file_name = "random-stream-2018-11-13.json",
+  parse = FALSE)
+```
+
+Read-in a streamed JSON file
+
+
+```r
+rj &lt;- parse_stream("random-stream-2018-11-13.json")
+```
+
+---
+
+## `stream_tweets()`
+
+Stream tweets indefinitely.
+
+
+```r
+stream_tweets(timeout = Inf, 
+  file_name = "random-stream-2018-11-13.json",
+  parse = FALSE)
+```
+
+---
+
+## `lookup_coords()`
+
+A useful convenience function–though it now requires an API key–for quickly looking up coordinates
+
+
+```r
+## stream tweets sent from london
+luk1 &lt;- stream_tweets(q = lookup_coords("London, UK"), timeout = 60)
+
+## search tweets sent from london
+luk2 &lt;- search_tweets(
+  geocode = lookup_coords("London, UK"), n = 1000)
+```
+
 
 ---
 class: inverse, center, middle
 
-# Textual analysis
+# Analyzing Twitter data
 
 ---
 
-## Sentiment
+## Data set
+
+For these examples, let's gather a data set of iPhone and Android users
 
 
 ```r
-sent &lt;- syuzhet::get_sentiment(tweet_source_data$text)
+iphone_android &lt;- search_tweets(
+  paste0('(filter:verified OR -filter:verified) AND \n', 
+    '(source:"Twitter for iPhone" OR source:"Twitter for Android")'),
+  include_rts = FALSE,
+  n = 18000
+)
 
-tweet_source_data$sent &lt;- sent
+## view breakdown of tweet source (device)
+table(iphone_android$source)
+```
 
-dplyr::mutate(tweet_source_data, sent = sent)
+---
 
-syuzhet::get_nrc_sentiment(tweet_source_data$text[1:50])
+## Text processing
 
-tweet_source_data &lt;- tweet_source_data %&gt;%
-  dplyr::mutate(
-    sent = syuzhet::get_sentiment(text)
+Tokenize tweets [into words]
+
+
+```r
+## tokenize each tweet into words vecotr
+wds &lt;- tokenizers::tokenize_tweets(iphone_android$text)
+
+## collapse back into stirngs
+txt &lt;- purrr::map_chr(wds, paste, collapse = " ")
+
+## get sentiment using afinn dictionary
+iphone_android$sent &lt;- syuzhet::get_sentiment(
+  iphone_android$text, method = "afinn"
+)
+```
+
+---
+
+## Compare groups
+
+Group by source and summarize some numeric variables
+
+
+```r
+iphone_android %&gt;%
+  group_by(source) %&gt;%
+  summarise(sent = mean(sent, na.rm = TRUE), 
+    avg_rt = mean(retweet_count, na.rm = TRUE),
+    avg_fav = mean(favorites_count, na.rm = TRUE),
+    tweets = mean(statuses_count, na.rm = TRUE),
+    friends = mean(retweet_count, na.rm = TRUE),
+    followers = mean(retweet_count, na.rm = TRUE),
+    ff_rat = (friends + 1) / (friends + followers + 1)
   )
 ```
-
----
-class: inverse, center, middle
-
-# Machine learning
 
 ---
 
 ## Features
 
+Easily automate feature extraction for Twitter data.
+
 
 ```r
-tf &lt;- textfeatures::textfeatures(tweet_source_data)
-library(tidyverse)
-library(gbm)
-table(tweet_source_data$source)
+## install package
+remotes::install_github("mkearney/textfeatures")
 
+## feature extraction
+tf &lt;- textfeatures::textfeatures(iphone_android)
+
+## add dependent variable
 tf$y &lt;- tweet_source_data$source == "Twitter for iPhone"
-```
-
----
-
-## Machine learning data
-
-
-```r
-## all tweets
-v &lt;- search_tweets('filter:verified', n = 300)
-nv &lt;- search_tweets('-filter:verified', n = 300)
-v &lt;- dplyr::bind_rows(v, nv)
 ```
 
 ---
 
 ## Machine learning
 
+Run a boosted model
+
 
 ```r
+## load gbm and estimate model
+library(gbm)
 m1 &lt;- gbm(y ~ ., data = tf[1:15000, -1], n.trees = 200)
+#summary(m1)
+
+## generate predictions
 p &lt;- predict(m1, newdata = tf[15001:nrow(tf), -1],
   type = "response", n.trees = 200)
 
+## how'd we do?
 table(p &gt; .50, tf$y[15001:nrow(tf)])
-(2769 + 1245) / (756 + 1530 + 2769 + 1245)
-
-summary(m1)
 ```
-
----
-
-## Group/summarise
-
-
-```r
-tweet_source_data %&gt;%
-  group_by(source) %&gt;%
-  summarise(
-    n = n(),
-    users = n_distinct(user_id),
-    chars = mean(nchar(text)),
-    sent = mean(sent, na.rm = TRUE)
-  )
-```
-
 
 ---
 
 ## Tweetbotornot
 
+A package designed to estimate the probability of an account being a bot.
+
 
 ```r
+## install from Github
 remotes::install_github("mkearney/tweetbotornot")
-remotes::install_github("mkearney/textfeatures")
 
-##
-install.package("quanteda")
+## estimate some accounts
+bp &lt;- tweetbotornot::tweetbotornot(c(
+  "kearneymw", 
+  "realdonaldtrump",
+  "netflix_bot", 
+  "tidyversetweets",
+  "thebotlebowski")
+)
+bp
 ```
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

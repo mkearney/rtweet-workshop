@@ -1,89 +1,6 @@
 ---
-title: "rtweet-workshop"
-subtitle: "Collecting and analyzing Twitter data"
-author: '`r rmdees::title_author()`'
-date: '`r rmdees::title_icons_fa5()`'
-output:
-  xaringan::moon_reader:
-    css: ["robot", "robot-fonts", "css/slides.css"]
-    self_contained: no
-    nature:
-      highlightStyle: github
-      highlightLines: true
-      countIncrementalSlides: false
-      ratio: '16:9'
----
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(
-  echo = TRUE,
-  eval = FALSE,
-  collapse = TRUE,
-  comment = "#>"
-)
-options(htmltools.dir.version = FALSE)
-htmltools::tagList(rmarkdown::html_dependency_font_awesome())
-
-## load libraries, set ggplot2 theme, and create datatable function
-library(mwk)
-theme_set(tfse::theme_mwk(base_size = 14))
-set.seed(20180911)
-print <- function(x, n = NULL, align = "c", digits = 3) {
-  if (is.null(n)) n <- nrow(x)
-  if (nrow(x) < n) n <- nrow(x)
-  cat(paste(knitr::kable(x[seq_len(n), ], format = "markdown", 
-    align = align, digits = digits), collapse = "\n"))
-}
-```
-
-background-image: url(img/logo.png)
-background-size: 350px auto
-background-position: 50% 20%
-class: center, bottom
-
-View these slides at [rtweet-workshop.mikewk.com](https://rtweet-workshop.mikewk.com)
-
-View companion script at [rtweet-workshop.mikewk.com/script.Rmd](https://rtweet-workshop.mikewk.com/script.Rmd)
-
-View the Github repo at [github.com/mkearney/rtweet-workshop](https://github.com/mkearney/rtweet-workshop)
-
----
-class: tight
-
-## About {rtweet}
-
-- On Comprehensive R Archive Network (CRAN)
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)[![CRAN status](https://www.r-pkg.org/badges/version/rtweet)](https://cran.r-project.org/package=rtweet)
-
-- Growing base of users
-
-![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/rtweet)[![Depsy](http://depsy.org/api/package/cran/rtweet/badge.svg)](http://depsy.org/package/r/rtweet)
-
-- Fairly stable
-
-[![Build Status](https://travis-ci.org/mkearney/rtweet.svg?branch=master)](https://travis-ci.org/mkearney/rtweet)[![Coverage Status](https://codecov.io/gh/mkearney/rtweet/branch/master/graph/badge.svg)](https://codecov.io/gh/mkearney/rtweet?branch=master)[![lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-
-- Package website: [rtweet.info](http://rtweet.info)
-
-[![Generic badge](https://img.shields.io/badge/website-up-green.svg)](http://rtweet.info/)
-
-- Github repo: [mkearney/rtweet](https://github.com/mkearney/rtweet)
-
-[![Generic badge](https://img.shields.io/badge/stars-313-blue.svg)](https://github.com/mkearney/rtweet/)[![Generic badge](https://img.shields.io/badge/forks-74-blue.svg)](https://github.com/mkearney/rtweet/)
-
----
-
-## Roadmap
-1. Search tweets
-1. Timelines
-1. Favorites
-1. Lookup tweets
-1. Friends/followers
-1. Lookup users
-1. Lists
-1. Stream
-
+title: "R Notebook"
+output: html_notebook
 ---
 
 ## Install
@@ -107,8 +24,6 @@ library(rtweet)
 ```
 
 
----
-
 ## httpuv
 
 To authorize rtweet's embedded **rstats2twitter** app via web browser, the **{httpuv}** pakage is required
@@ -119,45 +34,7 @@ install.packages("httpuv")
 ```
 
 
----
-class: inverse, center, middle
-
-# Accessing web APIs
-
----
-
-## Some background
-
-**Application Program Interfaces** (APIs) are sets of protocols that govern interactions between sites and users.
-
-+ APIs are similar to web browsers but with different purpose:
-   - Web browsers render **visual content**
-   - Web APIs manage and organize **data**
-+ For public APIs, many sites only allow **authorized** users
-   - Twitter, Facebook, Instagram, Github, etc.
-
----
-
-## developer.twitter.com
-
-To create your own token (with write and DM-read access), users must...
-
-1. Apply and get approved for a developer account with Twitter
-1. Create a Twitter app (fill out a form)
-   - For step-by-step instructions on how to create a Twitter app and corresponding token, see 
-   [rtweet.info/articles/auth.html](https://rtweet.info/articles/auth.html)
-
----
-class: inverse, center, middle
-
-# Twitter Data!
-
----
-class: inverse, center, middle
-
-# 1. <br /> Searching for tweets
-
----
+# 1. Searching for tweets
 
 ## `search_tweets()`
 
@@ -172,8 +49,6 @@ rds
 
 > *Note*: implicit `AND` between words
 
----
-
 ## `search_tweets()`
 
 Search for exact phrase
@@ -187,8 +62,6 @@ ds <- search_tweets("\"data science\"")
 ds
 ```
 
----
-
 ## `search_tweets()`
 
 Search for keyword(s) **and** phrase
@@ -197,8 +70,6 @@ Search for keyword(s) **and** phrase
 rpds <- search_tweets("rstats python \"data science\"")
 rpds
 ```
-
----
 
 ## `search_tweets()`
 
@@ -211,11 +82,7 @@ rstats <- search_tweets("rstats", n = 10000)
 rstats
 ```
 
-<br>
-
 > Rate limit of 18,000 per fifteen minutes
-
----
 
 ## `search_tweets()`
 
@@ -223,8 +90,7 @@ rstats
 verified **or** non-verified tweets
 
 ```{r}
-fff <- search_tweets(
-  "filter:verified OR -filter:verified", n = 18000)
+fff <- search_tweets("filter:verified OR -filter:verified", n = 18000)
 fff
 ```
 
@@ -233,13 +99,6 @@ Visualize second-by-second frequency
 ```{r}
 ts_plot(fff, "secs")
 ```
-
-
----
-
-<p style="text-align:center"> <img src="img/fff.png" /> </p>
-
----
 
 ## `search_tweets()`
 
@@ -258,8 +117,6 @@ rt <- search_tweets("rstats", lang = "en",
 nws <- search_tweets("filter:news")
 ```
 
----
-
 ## `search_tweets()`
 
 + filter only tweets that contain links
@@ -269,15 +126,12 @@ links <- search_tweets("filter:links")
 links
 ```
 
-
 + filter only tweets that contain video
 
 ```{r}
 vids <- search_tweets("filter:video")
 vids
 ```
-
----
 
 ## `search_tweets()`
 
@@ -287,16 +141,9 @@ vids
 ## vector of screen names
 users <- c("cnnbrk", "AP", "nytimes", 
   "foxnews", "msnbc", "seanhannity", "maddow")
-paste0("from:", users, collapse = " OR ")
-#> "from:cnnbrk OR from:AP OR from:nytimes OR from:foxnews OR 
-#> from:msnbc OR from:seanhannity OR from:maddow"
-
 tousers <- search_tweets(paste0("from:", users, collapse = " OR "))
 tousers
 ```
-
-
----
 
 ## `search_tweets()`
 
@@ -313,8 +160,6 @@ rt <- search_tweets("lang:en", source = '"Twitter for iPhone"')
 ```
 
 
----
-
 ## `search_tweets()`
 
 **PRO TIP #3**: Search by geolocation (ex: tweets within 25 miles of Columbia, MO)
@@ -325,9 +170,6 @@ como <- search_tweets(
 )
 como
 ```
-
-
----
 
 ## `search_tweets()`
 
@@ -342,15 +184,7 @@ maps::map("state", fill = TRUE, col = "#ffffff",
 with(como, points(lng, lat, pch = 20, col = "red"))
 ```
 
-<br>
-
 > This code plots geotagged tweets on a map of Missouri
-
----
-
-<p style="text-align:center"> <img src="img/como.png" /> </p>
-
----
 
 ## `search_tweets()`
 
@@ -366,12 +200,7 @@ mosen <- search_tweets(
 ```
 
 
----
-class: inverse, center, middle
-
-# 2. <br /> User timelines
-
----
+# 2. User timelines
 
 ## `get_timeline()`
 
@@ -381,8 +210,6 @@ Get the most recent tweets posted by a user.
 cnn <- get_timeline("cnn")
 ```
 
----
-
 ## `get_timeline()`
 
 Get up to the most recent 3,200 tweets (endpoint max) posted by multiple users.
@@ -390,8 +217,6 @@ Get up to the most recent 3,200 tweets (endpoint max) posted by multiple users.
 ```{r}
 nws <- get_timeline(c("cnn", "foxnews", "msnbc"), n = 3200)
 ```
-
----
 
 ## `ts_plot()`
 
@@ -404,12 +229,7 @@ nws %>%
 ```
 
 
----
-class: inverse, center, middle
-
-# 3. <br /> User favorites
-
----
+# 3. User favorites
 
 ## `get_favorites()`
 
@@ -419,12 +239,7 @@ Get up to the most recent 3,000 tweets favorited by a user.
 kmw_favs <- get_favorites("kearneymw", n = 3000)
 ```
 
----
-class: inverse, center, middle
-
-# 4. <br /> Lookup statuses
-
----
+# 4. Lookup statuses
 
 ## `lookup_tweets()`
 
@@ -436,12 +251,7 @@ twt <- lookup_tweets(status_ids)
 ```
 
 
----
-class: inverse, center, middle
-
-# 5. <br /> Getting friends/followers
-
----
+# 5. Getting friends/followers
 
 ## Friends/followers
 
@@ -449,8 +259,6 @@ Twitter's API documentation distinguishes between **friends** and **followers**.
 
 + **Friend** refers to an account a given user follows
 + **Follower** refers to an account following a given user
-
----
 
 ## `get_friends()`
 
@@ -460,8 +268,6 @@ Get user IDs of accounts **followed by** (AKA friends) [@jack](https://twitter.c
 fds <- get_friends("jack")
 fds
 ```
-
----
 
 ## `get_friends()`
 
@@ -474,8 +280,6 @@ fds <- get_friends(
 fds
 ```
 
----
-
 ## `get_followers()`
 
 Get user IDs of accounts **following** (AKA followers) [@mizzou](https://twitter.com/mizzou).
@@ -485,8 +289,6 @@ mu <- get_followers("mizzou")
 mu
 ```
 
----
-
 ## `get_followers()`
 
 Unlike friends (limited by Twitter to 5,000), there is **no limit** on the number of followers. 
@@ -495,8 +297,6 @@ To get user IDs of all 55(ish) million followers of @realDonaldTrump, you need t
 
 1. A stable **internet** connection 
 1. **Time** – approximately five and a half days
-
----
 
 ## `get_followers()`
 
@@ -512,12 +312,8 @@ rdt <- get_followers(
 ```
 
 
----
-class: inverse, center, middle
 
-# 6. <br /> Lookup users
-
----
+# 6. Lookup users
 
 ## `lookup_users()`
 
@@ -532,9 +328,6 @@ usr <- lookup_users(users)
 usr
 ```
 
-
----
-
 ## `search_users()`
 
 It's also possible to search for users. Twitter will look for matches in user names, screen names, and profile bios.
@@ -545,12 +338,8 @@ bkn <- search_users("breaking news")
 bkn
 ```
 
----
-class: inverse, center, middle
 
-# 7. <br /> Lists
-
----
+# 7. Lists
 
 ## `lists_memberships()`
 
@@ -562,8 +351,6 @@ nsl <- lists_memberships("NateSilver538")
 nsl
 ```
 
----
-
 ## `lists_members()`
 
 + Get all list members (accounts on a list)
@@ -574,12 +361,9 @@ cng <- lists_members(owner_user = "cspan", slug = "members-of-congress")
 cng
 ```
 
----
-class: inverse, center, middle
 
-# 8. <br /> Streaming tweets
 
----
+# 8. Streaming tweets
 
 ## `stream_tweets()`
 
@@ -594,8 +378,6 @@ ss <- stream_tweets("")
 ```{r}
 sf <- stream_tweets("mueller,fbi,investigation,trump,realdonaldtrump")
 ```
-
----
 
 ## `stream_tweets()`
 
@@ -613,8 +395,6 @@ st <- stream_tweets(cng$user_id)
 sl <- stream_tweets(c(-180, -90, 180, 90))
 ```
 
----
-
 ## `stream_tweets()`
 
 The default duration for streams is thirty seconds `timeout = 30`
@@ -625,8 +405,6 @@ The default duration for streams is thirty seconds `timeout = 30`
 ## stream for 10 minutes
 stm <- stream_tweets(timeout = 60 * 10)
 ```
-
----
 
 ## `stream_tweets()`
 
@@ -644,8 +422,6 @@ Read-in a streamed JSON file
 rj <- parse_stream("random-stream-2018-11-13.json")
 ```
 
----
-
 ## `stream_tweets()`
 
 Stream tweets indefinitely.
@@ -656,8 +432,6 @@ stream_tweets(timeout = Inf,
   parse = FALSE)
 ```
 
----
-
 ## `lookup_coords()`
 
 A useful convenience function–though it now requires an API key–for quickly looking up coordinates
@@ -667,17 +441,13 @@ A useful convenience function–though it now requires an API key–for quickly 
 luk1 <- stream_tweets(q = lookup_coords("London, UK"), timeout = 60)
 
 ## search tweets sent from london
-luk2 <- search_tweets(
-  geocode = lookup_coords("London, UK"), n = 1000)
+luk2 <- search_tweets(geocode = lookup_coords("London, UK"), n = 1000)
 ```
 
 
----
-class: inverse, center, middle
 
 # Analyzing Twitter data
 
----
 
 ## Data set
 
@@ -685,8 +455,7 @@ For these examples, let's gather a data set of iPhone and Android users
 
 ```{r}
 iphone_android <- search_tweets(
-  paste0('(filter:verified OR -filter:verified) AND \n', 
-    '(source:"Twitter for iPhone" OR source:"Twitter for Android")'),
+  '(filter:verified OR -filter:verified) AND (source:"Twitter for iPhone" OR source:"Twitter for Android")',
   include_rts = FALSE,
   n = 18000
 )
@@ -694,8 +463,6 @@ iphone_android <- search_tweets(
 ## view breakdown of tweet source (device)
 table(iphone_android$source)
 ```
-
----
 
 ## Text processing
 
@@ -714,8 +481,6 @@ iphone_android$sent <- syuzhet::get_sentiment(
 )
 ```
 
----
-
 ## Compare groups
 
 Group by source and summarize some numeric variables
@@ -733,8 +498,6 @@ iphone_android %>%
   )
 ```
 
----
-
 ## Features
 
 Easily automate feature extraction for Twitter data.
@@ -749,8 +512,6 @@ tf <- textfeatures::textfeatures(iphone_android)
 ## add dependent variable
 tf$y <- tweet_source_data$source == "Twitter for iPhone"
 ```
-
----
 
 ## Machine learning
 
@@ -769,8 +530,6 @@ p <- predict(m1, newdata = tf[15001:nrow(tf), -1],
 ## how'd we do?
 table(p > .50, tf$y[15001:nrow(tf)])
 ```
-
----
 
 ## Tweetbotornot
 
