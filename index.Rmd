@@ -5,17 +5,14 @@ author: '`r rmdees::title_author()`'
 date: '`r rmdees::title_icons_fa5()`'
 output:
   xaringan::moon_reader:
-    lib_dir: lib
     css: ["robot", "robot-fonts", "css/slides.css"]
-    self_contained: true
+    self_contained: no
     nature:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
       ratio: '16:9'
 ---
-
-## Slides
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(
@@ -39,14 +36,12 @@ print <- function(x, n = NULL, align = "c", digits = 3) {
 }
 ```
 
----
 background-image: url(img/logo.png)
 background-size: 350px auto
 background-position: 50% 20%
 class: center, bottom
 
-
-View these slides at [mkearney.github.io/rtweet-workshop](https://mkearney.github.io/rtweet-workshop)
+View these slides at [rtweet-workshop.mikewk.com](https://rtweet-workshop.mikewk.com)
 
 ---
 class: tight
@@ -72,6 +67,18 @@ class: tight
 - Github repo: [mkearney/rtweet](https://github.com/mkearney/rtweet)
 
 [![Generic badge](https://img.shields.io/badge/stars-209-blue.svg)](https://github.com/mkearney/rtweet/)[![Generic badge](https://img.shields.io/badge/forks-47-blue.svg)](https://github.com/mkearney/rtweet/)
+
+---
+
+## Roadmap
+1. Search
+1. Timelines
+1. Favorites
+1. Lookup tweets
+1. Friends/followers
+1. Lookup users
+1. Lists
+1. Stream
 
 ---
 
@@ -109,7 +116,7 @@ class: inverse, center, middle
 
 APIs are similar to web browsers but with different purpose:
 
-- Web browsers **render** content
+- Web browsers render **visual content**
 - Web APIs manage and organize **data**
 
 For public APIs, many sites only allow **authorized** users
@@ -120,9 +127,9 @@ For public APIs, many sites only allow **authorized** users
 
 ## developer.twitter.com
 
-To create a token with write and DM-read access, users must...
+To create your own token (with write and DM-read access), users must...
 
-1. Apply and get approved for a developer account with Twitter 
+1. Apply and get approved for a developer account with Twitter
 1. Create a Twitter app (fill out a form)
 
 For step-by-step instructions on how to create a Twitter app and corresponding token, see **[rtweet.info/articles/auth.html](https://rtweet.info/articles/auth.html)
@@ -135,7 +142,214 @@ class: inverse, center, middle
 ---
 class: inverse, center, middle
 
-# 1. <br /> Getting friends/followers
+# 1. <br /> Searching for tweets
+
+---
+
+## `search_tweets()`
+
+Search for one or more keyword(s) (note: implicit `AND` between words)
+
+```{r}
+rds <- search_tweets("rstats data science")
+rds
+```
+
+---
+
+## `search_tweets()`
+
+Search for exact phrase
+
+```{r}
+ds <- search_tweets('"data science"')
+ds
+```
+
+---
+
+## `search_tweets()`
+
+Search for keyword(s) **and** phrase
+
+```{r}
+rpds <- search_tweets("rstats python \"data science\"")
+rpds
+```
+
+---
+
+## `search_tweets()`
+
+By default, `search_tweets()` returns up to 100 of the most recent matching 
+tweets. To return more, set `n` to a higher number (tip: use interval of 100)
+
+```{r}
+rstats <- search_tweets("rstats", n = 10000)
+rstats
+```
+
+---
+
+## `search_tweets()`
+
+**PRO TIP 12**: Get the firehose for free by searching for tweets posted by
+verified or non-verified tweets.
+
+```{r}
+fff <- search_tweets("filter:verified OR -filter:verified", n = 18000)
+fff
+ts_plot(fff, "secs")
+```
+
+
+---
+
+<p style="text-align:center"> <img src="img/fff.png" /> </p>
+
+---
+
+## `search_tweets()`
+
+**PRO TIP #2**: Use search operators provided by Twitter, e.g.,
+
++ filter by language and exclude retweets and replies
+
+```{r}
+rt <- search_tweets("rstats", lang = "en", include_rts = FALSE, `-filter` = "replies")
+```
+
++ filter only tweets linking to news articles
+
+```{r}
+nws <- search_tweets("filter:news")
+```
+
+---
+
++ filter only tweets with at least 100 favorites or 100 retweets
+
+```{r}
+pop <- search_tweets("min_faves:100 OR min_retweets:100")
+```
+
++ filter by the type of device that posted the tweet.
+
+```{r}
+rt <- search_tweets("lang:en", source = '"Twitter for iPhone"')
+```
+
+
+---
+
+## `search_tweets()`
+
+**PRO TIP #3**: Search geolocation (ex: tweets within 25 miles of Columbia, MO)
+
+```{r}
+como <- search_tweets(geocode = "38.9517,-92.3341,25mi", n = 1000)
+como <- lat_lng(como)
+par(mar = c(0, 0, 0, 0))
+maps::map("state", fill = TRUE, col = "#ffffff", 
+  lwd = .25, mar = c(0, 0, 0, 0), 
+  xlim = c(-96, -89), y = c(35, 41))
+with(como, points(lng, lat, pch = 20, col = "red"))
+```
+
+---
+
+<p style="text-align:center"> <img src="img/como.png" /> </p>
+
+---
+
+## `search_tweets()`
+
+**PRO TIP #4**: (for developer accounts only) Use `bearer_token()` to increase rate limit to 45,000 per
+fifteen minutes.
+
+```{r}
+mosen <- search_tweets(
+  "mccaskill OR hawley", 
+  n = 45000, 
+  token = bearer_token()
+)
+```
+
+
+---
+class: inverse, center, middle
+
+# 2. <br /> User timelines
+
+---
+
+## `get_timeline()`
+
+Get the most recent tweets posted by a user.
+
+```{r}
+cnn <- get_timeline("cnn")
+```
+
+---
+
+## `get_timeline()`
+
+Get up to the most recent 3,200 tweets (endpoint max) posted by multiple users.
+
+```{r}
+nws <- get_timeline(c("cnn", "foxnews", "msnbc"), n = 3200)
+```
+
+---
+
+## `ts_plot()`
+
+Group by `screen_name` and plot hourly frequencies of tweets.
+
+```{r}
+nws %>%
+  dplyr::group_by(screen_name) %>%
+  ts_plot("hours")
+```
+
+
+---
+class: inverse, center, middle
+
+# 3. <br /> User favorites
+
+---
+
+## `get_favorites()`
+
+Get up to the most recent 3,000 tweets favorited by a user.
+
+```{r}
+kmw_favs <- get_favorites("kearneymw", n = 3000)
+```
+
+---
+class: inverse, center, middle
+
+# 5. <br /> Lookup statuses
+
+---
+
+## `lookup_tweets()`
+
+```{r}
+## `lookup_tweets()`
+status_ids <- c("947235015343202304", "947592785519173637",
+  "948359545767841792", "832945737625387008")
+twt <- lookup_tweets(status_ids)
+```
+
+
+---
+class: inverse, center, middle
+
+# 5. <br /> Getting friends/followers
 
 ---
 
@@ -211,196 +425,7 @@ rdt <- get_followers(
 ---
 class: inverse, center, middle
 
-# 2. <br /> Searching for tweets
-
----
-
-## `search_tweets()`
-
-Search for one or more keyword(s) (note: implicit `AND` between words)
-
-```{r}
-rds <- search_tweets(q = "rstats data science")
-rds
-```
-
----
-
-## `search_tweets()`
-
-Search for exact phrase
-
-```{r}
-ds <- search_tweets('"data science"')
-ds
-```
-
----
-
-## `search_tweets()`
-
-Search for keyword(s) and phrase
-
-```{r}
-rpds <- search_tweets("rstats python \"data science\"")
-rpds
-```
-
----
-
-## `search_tweets()`
-
-By default, `search_tweets()` returns up to 100 of the most recent matching 
-tweets. To return more, set `n` to a higher number (for normal tokens, the rate
-limit is 18,000 every fifteen minutes).
-
-```{r}
-rstats <- search_tweets(q = "rstats", n = 10000)
-rstats
-```
-
----
-
-## `search_tweets()`
-
-**PRO TIP #1**: Use `bearer_token()` to increase rate limit to 45,000 per
-fifteen minutes.
-
-```{r}
-mosen <- search_tweets(
-  "mccaskill OR hawley", 
-  n = 45000, 
-  token = bearer_token()
-)
-```
-
----
-
-## `search_tweets()`
-
-**PRO TIP #2**: Get the firehose for free by searching for tweets posted by
-verified or non-verified tweets.
-
-```{r}
-fff <- search_tweets(
-  "filter:verified OR -filter:verified", 
-  n = 45000,
-  token = bearer_token()
-)
-ts_plot(fff, "secs")
-```
-
-
----
-
-<p style="text-align:center"> <img src="img/fff.png" /> </p>
-
----
-
-## `search_tweets()`
-
-**PRO TIP #3**: Use search operators provided by Twitter, e.g.,
-
-filter by language and exclude retweets
-
-```{r}
-rt <- search_tweets("rstats", lang = "en", include_rts = FALSE)
-```
-
----
-
-## `search_tweets()`
-
-search geolocation (ex: tweets within 25 miles of Columbia, MO)
-
-```{r}
-como <- search_tweets(geocode = "38.9517,-92.3341,25mi", n = 1000)
-como <- lat_lng(como)
-par(mar = c(0, 0, 0, 0))
-maps::map("state", fill = TRUE, col = "#ffffff", 
-  lwd = .25, mar = c(0, 0, 0, 0), 
-  xlim = c(-96, -89), y = c(35, 41))
-with(como, points(lng, lat, pch = 20, col = "red"))
-```
-
----
-
-<p style="text-align:center"> <img src="img/como.png" /> </p>
-
----
-
-## `search_tweets()`
-
-Filter by the type of device that posted the tweet.
-
-```{r}
-rt <- search_tweets("lang:en", n = 300,
-  source = '"Twitter for iPhone"')
-```
-
----
-class: inverse, center, middle
-
-# 3. <br /> User timelines
-
----
-
-## `get_timeline()`
-
-Get the most recent tweets posted by a user.
-
-```{r}
-cnn <- get_timeline("cnn")
-```
-
----
-
-## `get_timeline()`
-
-Get up to the most recent 3,200 tweets (endpoint max) posted by multiple users.
-
-```{r}
-nws <- get_timeline(c("cnn", "foxnews", "msnbc"), n = 3200)
-```
-
----
-
-## `ts_plot()`
-
-Group by `screen_name` and plot hourly frequencies of tweets.
-
-```{r}
-nws %>%
-  dplyr::group_by(screen_name) %>%
-  ts_plot("hours")
-```
-
-
----
-class: inverse, center, middle
-
-# 4. <br /> User favorites
-
----
-
-## `get_favorites()`
-
-Get up to the most recent 3,000 tweets favorited by a user.
-
-```{r}
-kmw_favs <- get_favorites("kearneymw", n = 3000)
-```
-
----
-
-## `lookup_tweets()`
-
-```{r}
-## `lookup_tweets()`
-status_ids <- c("947235015343202304", "947592785519173637",
-  "948359545767841792", "832945737625387008")
-twt <- lookup_tweets(status_ids)
-```
+# 6. <br /> Lookup users
 
 ---
 
@@ -412,6 +437,30 @@ twt <- lookup_tweets(status_ids)
 users <- c("hadleywickham", "NateSilver538", "Nate_Cohn")
 usr <- lookup_users(users)
 ```
+
+---
+class: inverse, center, middle
+
+# 7. <br /> Lists
+
+---
+
+## List members
+
+```{r}
+lists_members()
+
+bp <- tweetbotornot::tweetbotornot(c(
+  "kearneymw", "realdonaldtrump",
+  "netflix_bot", "tidyversetweets",
+  "thebotlebowski", "rodhart99"))
+bp
+```
+
+---
+class: inverse, center, middle
+
+# 8. <br /> Streaming tweets
 
 ---
 
@@ -459,6 +508,11 @@ table(tweet_source_data$source)
 ```
 
 ---
+class: inverse, center, middle
+
+# Textual analysis
+
+---
 
 ## Sentiment
 
@@ -476,6 +530,11 @@ tweet_source_data <- tweet_source_data %>%
     sent = syuzhet::get_sentiment(text)
   )
 ```
+
+---
+class: inverse, center, middle
+
+# Machine learning
 
 ---
 
@@ -531,20 +590,6 @@ tweet_source_data %>%
   )
 ```
 
-
----
-
-## List members
-
-```{r}
-lists_members()
-
-bp <- tweetbotornot::tweetbotornot(c(
-  "kearneymw", "realdonaldtrump",
-  "netflix_bot", "tidyversetweets",
-  "thebotlebowski", "rodhart99"))
-bp
-```
 
 ---
 
