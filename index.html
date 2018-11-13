@@ -325,7 +325,8 @@ tousers
 
 
 ```r
-pop &lt;- search_tweets("min_faves:100 OR min_retweets:100")
+pop &lt;- search_tweets(
+  "(filter:verified OR -filter:verified) (min_faves:100 OR min_retweets:100)")
 ```
 
 + filter by the type of device that posted the tweet.

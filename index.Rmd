@@ -303,7 +303,8 @@ tousers
 + filter only tweets with at least 100 favorites or 100 retweets
 
 ```{r}
-pop <- search_tweets("min_faves:100 OR min_retweets:100")
+pop <- search_tweets(
+  "(filter:verified OR -filter:verified) (min_faves:100 OR min_retweets:100)")
 ```
 
 + filter by the type of device that posted the tweet.
