@@ -93,13 +93,25 @@ install.packages("rtweet")
 - Or install the **development version** from [Github](https://github.com/mkearney/rtweet).
 
 ```{r}
-devtools::install_github("mkearney/rtweet")
+#devtools::install_github("mkearney/rtweet")
 ```
 
 - Load **{rtweet}**
 
 ```{r tidy=FALSE}
 library(rtweet)
+```
+
+
+---
+
+## httpuv
+
+To authorize rtweet's embedded **rstats2twitter** app via web browser, the **{httpuv}** pakage is required
+
+```{r}
+## install httpuv for browser-based authentication
+install.packages("httpuv")
 ```
 
 
@@ -114,14 +126,11 @@ class: inverse, center, middle
 
 **Application Program Interfaces** (APIs) are sets of protocols that govern interactions between sites and users.
 
-APIs are similar to web browsers but with different purpose:
-
-- Web browsers render **visual content**
-- Web APIs manage and organize **data**
-
-For public APIs, many sites only allow **authorized** users
-
-- Twitter, Facebook, Instagram, Github, etc.
++ APIs are similar to web browsers but with different purpose:
+   - Web browsers render **visual content**
+   - Web APIs manage and organize **data**
++ For public APIs, many sites only allow **authorized** users
+   - Twitter, Facebook, Instagram, Github, etc.
 
 ---
 
@@ -131,8 +140,7 @@ To create your own token (with write and DM-read access), users must...
 
 1. Apply and get approved for a developer account with Twitter
 1. Create a Twitter app (fill out a form)
-
-For step-by-step instructions on how to create a Twitter app and corresponding token, see **[rtweet.info/articles/auth.html](https://rtweet.info/articles/auth.html)
+   - For step-by-step instructions on how to create a Twitter app and corresponding token, see **[rtweet.info/articles/auth.html](https://rtweet.info/articles/auth.html)
 
 ---
 class: inverse, center, middle
@@ -148,12 +156,14 @@ class: inverse, center, middle
 
 ## `search_tweets()`
 
-Search for one or more keyword(s) (note: implicit `AND` between words)
+Search for one or more keyword(s)
 
 ```{r}
 rds <- search_tweets("rstats data science")
 rds
 ```
+
+> note: implicit `AND` between words
 
 ---
 
@@ -181,8 +191,9 @@ rpds
 
 ## `search_tweets()`
 
-By default, `search_tweets()` returns up to 100 of the most recent matching 
-tweets. To return more, set `n` to a higher number (tip: use interval of 100)
++ `search_tweets()` returns 100 most recent matching tweets by default
+
++ Increase `n` to return more (tip: use intervals of 100)
 
 ```{r}
 rstats <- search_tweets("rstats", n = 10000)
@@ -193,7 +204,7 @@ rstats
 
 ## `search_tweets()`
 
-**PRO TIP 12**: Get the firehose for free by searching for tweets posted by
+**PRO TIP #1**: Get the firehose for free by searching for tweets posted by
 verified or non-verified tweets.
 
 ```{r}
