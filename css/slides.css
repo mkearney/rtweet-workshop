@@ -104,9 +104,9 @@ pre code {
 }
 
 .hljs {
-  box-shadow: 2px 2px 8px rgba(0,0,0,.2);
-  background-color: #f0f0f0;
-  border-color: rgba(0,0,0,.1);
+  box-shadow: 2px 2px 10px rgba(0,0,0,.2);
+  background-color: #f3f3f3 !important;
+  border-color: rgba(0,0,0,.05);
   border-style: solid;
   border-width: 1px;
   border-radius: 2px;
@@ -129,4 +129,14 @@ blockquote {
   color: #333333bb;
   padding: unset;
   margin-left: 2em;
+}
+.hljs {
+  color: #222 !important;
+}
+.hljs-comment, .hljs-quote {
+  font-style: normal !important;
+}
+li code.remark-inline-code , p code.remark-inline-code {
+  background-color: #f5f5f5;
+  font-size: 102%;
 }
