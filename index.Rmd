@@ -2,7 +2,7 @@
 title: "rtweet-workshop"
 subtitle: "Collecting and analyzing Twitter data"
 author: '`r rmdees::title_author()`'
-date: '`r rmdees::title_icons_fa5()`'
+date: '`r rmdees::title_icons_fa5(twitter = "kearneymw", github = "mkearney")`'
 output:
   xaringan::moon_reader:
     css: ["robot", "css/slides.css"]
@@ -26,7 +26,7 @@ htmltools::tagList(rmarkdown::html_dependency_font_awesome())
 
 ## load libraries, set ggplot2 theme, and create datatable function
 library(mwk)
-theme_set(tfse::theme_mwk(base_size = 14))
+theme_set(dataviz::theme_mwk(base_size = 14))
 set.seed(20180911)
 print <- function(x, n = NULL, align = "c", digits = 3) {
   if (is.null(n)) n <- nrow(x)
@@ -70,7 +70,7 @@ class: tight
 
 - Github repo: [mkearney/rtweet](https://github.com/mkearney/rtweet)
 
-[![Generic badge](https://img.shields.io/badge/stars-313-blue.svg)](https://github.com/mkearney/rtweet/)[![Generic badge](https://img.shields.io/badge/forks-74-blue.svg)](https://github.com/mkearney/rtweet/)
+[![Generic badge](https://img.shields.io/badge/stars-352-blue.svg)](https://github.com/mkearney/rtweet/)[![Generic badge](https://img.shields.io/badge/forks-81-blue.svg)](https://github.com/mkearney/rtweet/)
 
 ---
 

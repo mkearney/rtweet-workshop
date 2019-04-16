@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
   <head>
     <title>rtweet-workshop</title>
-    <meta charset="utf-8">
-    <meta name="author" content="Michael W. Kearney📊 School of Journalism  Informatics Institute  University of Missouri" />
+    <meta charset="utf-8" />
+    <meta name="author" content="Michael W. Kearney School of Journalism Informatics Institute University of Missouri" />
     <link href="index_files/remark-css/robot.css" rel="stylesheet" />
-    <link href="index_files/font-awesome/css/fa-svg-with-js.css" rel="stylesheet" />
-    <script src="index_files/font-awesome/js/fontawesome-all.min.js"></script>
-    <script src="index_files/font-awesome/js/fa-v4-shims.min.js"></script>
+    <link href="index_files/font-awesome/css/all.css" rel="stylesheet" />
+    <link href="index_files/font-awesome/css/v4-shims.css" rel="stylesheet" />
     <link rel="stylesheet" href="css/slides.css" type="text/css" />
   </head>
   <body>
@@ -16,7 +15,7 @@ class: center, middle, inverse, title-slide
 
 # rtweet-workshop
 ## Collecting and analyzing Twitter data
-### Michael W. Kearney📊<br/>School of Journalism <br/>Informatics Institute <br/>University of Missouri
+### Michael W. Kearney<br>School of Journalism<br>Informatics Institute<br>University of Missouri
 ### <table style="border-style:none;padding-top:30px;" class=".table">
 <tr>
 <th style="padding-right:75px!important">
@@ -75,7 +74,7 @@ class: tight
 
 - Github repo: [mkearney/rtweet](https://github.com/mkearney/rtweet)
 
-[![Generic badge](https://img.shields.io/badge/stars-313-blue.svg)](https://github.com/mkearney/rtweet/)[![Generic badge](https://img.shields.io/badge/forks-74-blue.svg)](https://github.com/mkearney/rtweet/)
+[![Generic badge](https://img.shields.io/badge/stars-352-blue.svg)](https://github.com/mkearney/rtweet/)[![Generic badge](https://img.shields.io/badge/forks-81-blue.svg)](https://github.com/mkearney/rtweet/)
 
 ---
 
@@ -845,6 +844,7 @@ bp &lt;- tweetbotornot::tweetbotornot(c(
 bp
 ```
     </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
 "highlightStyle": "github",
@@ -855,16 +855,57 @@ bp
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));
 });
-(function() {
-  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
   if (!r) return;
   s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
   d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
 })();</script>
 
 <script>
 (function() {
-  var i, text, code, codes = document.getElementsByTagName('code');
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
   for (i = 0; i < codes.length;) {
     code = codes[i];
     if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
@@ -878,7 +919,8 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     }
     i++;
   }
-})();
+};
+slideshow._releaseMath(document);
 </script>
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
